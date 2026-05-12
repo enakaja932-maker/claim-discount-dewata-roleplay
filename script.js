@@ -1,7 +1,7 @@
 const webhookURL = "https://discord.com/api/webhooks/1503821309191393370/BIezdj2t1mWobWShAIqqZ86VG33QH_y6sTZ89hKB3eVrBVIPo5GzubVPfWA7pP08J1T7";
 
 // CLIENT ID DISCORD
-const clientId = "PASTE_CLIENT_ID_DISCORD";
+const clientId = "1503823971051638964";
 
 // REDIRECT WEBSITE
 const redirectUri = window.location.origin + window.location.pathname;
