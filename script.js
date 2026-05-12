@@ -1,14 +1,16 @@
-const webhookURL = "https://discord.com/api/webhooks/1503821309191393370/BIezdj2t1mWobWShAIqqZ86VG33QH_y6sTZ89hKB3eVrBVIPo5GzubVPfWA7pP08J1T7";
+const webhookURL =
+  "https://discord.com/api/webhooks/1503821309191393370/BIezdj2t1mWobWShAIqqZ86VG33QH_y6sTZ89hKB3eVrBVIPo5GzubVPfWA7pP08J1T7";
 
 // CLIENT ID DISCORD
-const clientId = "1503823971051638964";
+const clientId =
+  "1503823971051638964";
 
 // REDIRECT WEBSITE
 const redirectUri =
   window.location.origin +
   window.location.pathname;
 
-// DATA USER DISCORD
+// USER DISCORD
 let discordUser = null;
 
 // LIST KODE DISCOUNT
@@ -25,50 +27,64 @@ const discountCodes = [
   "DEWATA10"
 ];
 
-// AUTO LOGIN CHECK
+// AUTO CHECK LOGIN
 window.onload = async () => {
 
-  const params = new URLSearchParams(
-    window.location.hash.substring(1)
-  );
+  const params =
+    new URLSearchParams(
+      window.location.hash.substring(1)
+    );
 
   const accessToken =
     params.get("access_token");
 
+  // LOGIN BERHASIL
   if(accessToken){
 
-    const response = await fetch(
-      "https://discord.com/api/users/@me",
-      {
-        headers:{
-          Authorization:
-            `Bearer ${accessToken}`
+    try {
+
+      const response = await fetch(
+        "https://discord.com/api/users/@me",
+        {
+          headers:{
+            Authorization:
+              `Bearer ${accessToken}`
+          }
         }
-      }
-    );
+      );
 
-    discordUser =
-      await response.json();
+      discordUser =
+        await response.json();
 
-    document.getElementById(
-      "claimBtn"
-    ).style.display = "block";
+      // TAMPILKAN BUTTON CLAIM
+      document.getElementById(
+        "claimBtn"
+      ).style.display = "block";
 
-    document.querySelector(
-      ".discord-btn"
-    ).innerHTML =
-      `LOGIN BERHASIL (${discordUser.username})`;
+      // UBAH BUTTON LOGIN
+      document.querySelector(
+        ".discord-btn"
+      ).innerHTML =
+        `LOGIN BERHASIL (${discordUser.username})`;
+
+    } catch(err){
+
+      console.log(err);
+
+    }
   }
 };
 
-// JOIN DISCORD + LOGIN
+// JOIN DISCORD
 function joinDiscord(){
 
+  // BUKA INVITE
   window.open(
     "https://discord.gg/EGHa3mc8R",
     "_blank"
   );
 
+  // LOGIN OAUTH
   setTimeout(() => {
 
     const oauthURL =
@@ -80,9 +96,10 @@ function joinDiscord(){
   },3000);
 }
 
-// CLAIM DISCOUNT
+// CLAIM REWARD
 function claimReward(){
 
+  // HARUS LOGIN
   if(!discordUser){
 
     alert(
@@ -92,7 +109,7 @@ function claimReward(){
     return;
   }
 
-  // AMBIL DATABASE CLAIM
+  // DATABASE CLAIM
   let claims =
     JSON.parse(
       localStorage.getItem(
@@ -114,7 +131,7 @@ function claimReward(){
 
   } else {
 
-    // AMBIL KODE YANG BELUM DIPAKAI
+    // AMBIL KODE TERSEDIA
     const usedCodes =
       Object.values(claims);
 
@@ -124,7 +141,7 @@ function claimReward(){
           !usedCodes.includes(code)
       );
 
-    // KODE HABIS
+    // JIKA HABIS
     if(!userCode){
 
       alert(
@@ -155,9 +172,10 @@ function claimReward(){
 
   document.getElementById(
     "discountCode"
-  ).innerHTML = userCode;
+  ).innerHTML =
+    userCode;
 
-  // WEBHOOK DATA
+  // DATA WEBHOOK
   const data = {
 
     username:
@@ -174,7 +192,8 @@ function claimReward(){
         description:
           "Ada user yang claim hadiah discount.",
 
-        color: 16711680,
+        color:
+          16711680,
 
         thumbnail: {
           url:
@@ -182,6 +201,7 @@ function claimReward(){
         },
 
         fields: [
+
           {
             name:
               "👤 Username Discord",
@@ -234,19 +254,21 @@ function claimReward(){
   };
 
   // KIRIM WEBHOOK
-  fetch(webhookURL, {
+  fetch(
+    webhookURL,
+    {
+      method:"POST",
 
-    method: "POST",
+      headers:{
+        "Content-Type":
+          "application/json"
+      },
 
-    headers: {
-      "Content-Type":
-        "application/json"
-    },
+      body:
+        JSON.stringify(data)
+    }
 
-    body:
-      JSON.stringify(data)
-
-  }).then(() => {
+  ).then(() => {
 
     console.log(
       "Webhook berhasil dikirim"
